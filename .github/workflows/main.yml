@@ -63,7 +63,8 @@ jobs:
 #          path: app/build/reports/androidTests/connected/
 
   app-distribution:
-    runs-on: macos-latest
+    name: Distribute APK
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
@@ -76,13 +77,13 @@ jobs:
       - name: Make Build
         run: ./gradlew assembleDebug
 
-      -name: Upload artifact to Firebase App Distribution
-       uses: wzieba/Firebase-Distribution-Github-Action@v1.2.2
-       with:
-         appid: '1:266592941376:android:bd938ad45db17081eb76a5'
-         token: '1//0g71kByuNTBW9CgYIARAAGBASNwF-L9IrkyfRjZQwH6Ht5xNTq1YJc5FHyTT8IqTvSsPo37oMjE5Ev_H7sRUtxyrePvBkXWOCunQ'
-         groups: QA
-         file: app/build/outputs/apk/debug/app-debug.apk
+      - name: Upload artifact to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.2.2
+        with:
+          appid: '1:266592941376:android:bd938ad45db17081eb76a5'
+          token: '1//0g71kByuNTBW9CgYIARAAGBASNwF-L9IrkyfRjZQwH6Ht5xNTq1YJc5FHyTT8IqTvSsPo37oMjE5Ev_H7sRUtxyrePvBkXWOCunQ'
+          groups: QA
+          file: app/build/outputs/apk/debug/app-debug.apk
 
 #  package:
 #    name: Generate APK
