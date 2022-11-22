@@ -63,9 +63,7 @@ jobs:
 #          path: app/build/reports/androidTests/connected/
 
   app-distribution:
-    name: Upload APK to Firebase
     runs-on: macos-latest
-
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
