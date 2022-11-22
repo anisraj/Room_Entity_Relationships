@@ -7,65 +7,65 @@ on:
     branches: [ master ]
     
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v2
+#  lint:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout the code
+#        uses: actions/checkout@v2
+#
+#      - name: Run Lint
+#        run: ./gradlew lintDebug
+#
+#      - name: Upload html test report
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: lint.html
+#          path: app/build/reports/lint-results-debug.html
+#
+#  unit-test:
+#    needs: [lint]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout the code
+#        uses: actions/checkout@v2
+#
+#      - name: Run tests
+#        run: ./gradlew test
+#
+#      - name: Upload test report
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: unit_test_report
+#          path: app/build/reports/tests/testDebugUnitTest/
+#
+#  instrumentation-test:
+#    needs: [unit-test]
+#    runs-on: macos-latest
+#    steps:
+#      - name: Checkout the code
+#        uses: actions/checkout@v3
+#
+#      - name: Set up JDK 11
+#        uses: actions/setup-java@v1
+#        with:
+#          java-version: 11
+#
+#      - name: Run espresso tests
+#        uses: reactivecircus/android-emulator-runner@v2
+#        with:
+#          api-level: 29
+#          script: ./gradlew connectedCheck
+#
+#      - name: Upload Test Report
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: instrumentation_test_report
+#          path: app/build/reports/androidTests/connected/
 
-      - name: Run Lint
-        run: ./gradlew lintDebug
-
-      - name: Upload html test report
-        uses: actions/upload-artifact@v2
-        with:
-          name: lint.html
-          path: app/build/reports/lint-results-debug.html
-
-  unit-test:
-    needs: [lint]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v2
-
-      - name: Run tests
-        run: ./gradlew test
-
-      - name: Upload test report
-        uses: actions/upload-artifact@v2
-        with:
-          name: unit_test_report
-          path: app/build/reports/tests/testDebugUnitTest/
-
-  instrumentation-test:
-    needs: [unit-test]
+  app-distribution:
+    name: Upload APK to Firebase
     runs-on: macos-latest
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v3
 
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-
-      - name: Run espresso tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          script: ./gradlew connectedCheck
-
-      - name: Upload Test Report
-        uses: actions/upload-artifact@v2
-        with:
-          name: instrumentation_test_report
-          path: app/build/reports/androidTests/connected/
-
-  package:
-    name: Generate APK
-    needs: [instrumentation-test]
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
@@ -75,11 +75,35 @@ jobs:
         with:
           java-version: 11
 
-      - name: Build debug APK
-        run: ./gradlew assembleDebug --stacktrace
+      - name: Make Build
+        run: ./gradlew assembleDebug
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v2
-        with:
-          name: entity_manager.apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+      -name: Upload artifact to Firebase App Distribution
+       uses: wzieba/Firebase-Distribution-Github-Action@v1.2.2
+       with:
+         appid: '1:266592941376:android:bd938ad45db17081eb76a5'
+         token: '1//0g71kByuNTBW9CgYIARAAGBASNwF-L9IrkyfRjZQwH6Ht5xNTq1YJc5FHyTT8IqTvSsPo37oMjE5Ev_H7sRUtxyrePvBkXWOCunQ'
+         groups: QA
+         file: app/build/outputs/apk/debug/app-debug.apk
+
+#  package:
+#    name: Generate APK
+#    needs: [instrumentation-test]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout the code
+#        uses: actions/checkout@v2
+#
+#      - name: Setup JDK 11
+#        uses: actions/setup-java@v1
+#        with:
+#          java-version: 11
+#
+#      - name: Build debug APK
+#        run: ./gradlew assembleDebug --stacktrace
+#
+#      - name: Upload APK
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: entity_manager.apk
+#          path: app/build/outputs/apk/debug/app-debug.apk
